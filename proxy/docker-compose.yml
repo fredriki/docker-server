@@ -1,0 +1,36 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: docker_net 
+      
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginxproxy/logs:/var/log/nginx
+      - ./nginxproxy/nginx/conf.d:/etc/nginx/conf.d
+      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf
+      - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf:ro
+      - /etc/letsencrypt/live/${MYDOMAIN}:/etc/nginx/certs:ro
+
+
+  dockergen:
+    image: nginxproxy/docker-gen
+    restart: unless-stopped
+    command: -notify-sighup nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginxtmpl/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl
+      # needs to match the volumes under nginx
+      - ./nginxproxy/logs:/var/log/nginx
+      - ./nginxproxy/nginx/conf.d:/etc/nginx/conf.d
+      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf
+      - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf
+      - /etc/letsencrypt/live/${MYDOMAIN}:/etc/nginx/certs:ro
