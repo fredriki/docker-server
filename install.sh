@@ -6,8 +6,6 @@ set_env ()
     read -p 'Domain name: ' domain
     echo MYDOMAIN=${domain} > common.env
     echo TZ=$(cat /etc/timezone) >> common.env
-    # Need to match subnet in network create
-    echo DOCKER_NET=10.0.0 >> common.env
     
     # Copy common environment and run containers install.sh if exist
     for d in */ ; do
@@ -29,7 +27,7 @@ install_docker ()
 {
    sudo apt install docker docker-compose
    sudo usermod -aG docker ${USER}
-   sudo docker network create --subnet=10.0.0.0/8 docker_net
+   sudo docker network create proxy_net
 }
 
 set_env
