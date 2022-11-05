@@ -5,7 +5,7 @@ set_env ()
     # Setting common environment stuff
     read -p 'Domain name: ' domain
     echo MYDOMAIN=${domain} > common.env
-    echo TZ=\"$(cat /etc/timezone)\" >> common.env
+    echo TZ=$(cat /etc/timezone) >> common.env
     
     # Copy common environment and run containers install.sh if exist
     for d in */ ; do
