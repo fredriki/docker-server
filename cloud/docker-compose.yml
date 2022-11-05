@@ -38,7 +38,7 @@ services:
       - .env
       
 networks:
-  docker_net:
+  proxy_net:
     external: true
   redisnet:
   dbnet:
