@@ -3,7 +3,7 @@ version: '3'
 networks:
   default:
     external:
-      name: docker_net 
+      name: proxy_net 
       
 services:
   nginx:
