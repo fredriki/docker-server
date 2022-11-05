@@ -22,8 +22,15 @@ update ()
     docker image prune
 }
 
+reset ()
+{
+    # Removes everything except managed by git, need to run install.sh after this
+    sudo git clean -f -d -x
+}
+
 case "$1" in
     cert) cert;;
     update) update;;
+    reset) reset;;
 esac
 
