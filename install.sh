@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set_env ()
 {
     # Setting common environment stuff
