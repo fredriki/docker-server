@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  nc:
+    image: nextcloud:apache
+    restart: always
+
+    volumes:
+      - ./nextcloud/nc_data:/var/www/html
+    networks:
+      - docker_net
+      - redisnet
+      - dbnet
+    environment:
+      - VIRTUAL_HOST=cloud.${MYDOMAIN}
+      - NEXTCLOUD_TRUSTED_DOMAINS=cloud.${MYDOMAIN}
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - redisnet
+    expose:
+      - 6379
+  db:
+    image: mariadb:10.5
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - ./mariadb/db_data:/var/lib/mysql
+    networks:
+      - dbnet
+    expose:
+      - 3306
+    env_file:
+      - .env
+      
+networks:
+  docker_net:
+    external: true
+  redisnet:
+  dbnet:
