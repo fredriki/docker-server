@@ -29,7 +29,7 @@ services:
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     restart: always
     volumes:
-      - ./mariadb/db_data:/var/lib/mysql
+      - ./nextcloud/db_data:/var/lib/mysql
     networks:
       - dbnet
     expose:
