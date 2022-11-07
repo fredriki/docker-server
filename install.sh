@@ -30,6 +30,15 @@ install_docker ()
    sudo docker network create proxy_net
 }
 
+local_dns ()
+{
+   mkdir vpn-dns/etc-dnsmasq.d
+   touch vpn-dns/etc-dnsmasq.d/02-lan.conf
+   IPV4_PUBLIC=$(ip -o -4 route show default | egrep -o 'dev [^ ]*' | awk '{print $2}' | xargs ip -4 addr show | grep 'inet ' | awk '{print $2}' | grep -o "^[0-9.]*"  | tr -cd '\11\12\15\40-\176' | head -1)
+   echo "address=/XXXXXX/${IPV4_PUBLIC}" | sudo tee vpn-dns/etc-dnsmasq.d/02-lan.conf 
+   docker network create --subnet=172.22.0.0/16 docker_net
+}
+
 set_env
 install_certbot
 install_docker
