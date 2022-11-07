@@ -1,0 +1,75 @@
+version: '3'
+
+networks:
+  docker_net:
+    external: true
+      
+services:
+  wg-easy:
+    depends_on: [unbound, pihole]
+    environment:
+      # ⚠️ Required:
+      # Change this to your host's public address
+      - WG_HOST=${MYDOMAIN}
+
+      # Optional:
+      # - PASSWORD=foobar123
+      # - WG_PORT=51820
+      # - WG_DEFAULT_ADDRESS=10.8.0.x
+      - WG_DEFAULT_DNS=172.22.0.100
+      # - WG_ALLOWED_IPS=192.168.15.0/24, 10.0.1.0/24      
+      - VIRTUAL_HOST=vpn.${MYDOMAIN}
+      - VIRTUAL_PORT=51821
+      - NETWORK_ACCESS=internal
+    image: weejewel/wg-easy
+    container_name: vpn
+    volumes:
+      - ./wg:/etc/wireguard
+    ports:
+      - "51820:51820/udp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+    networks:
+      docker_net:
+      
+  unbound:
+    image: "mvance/unbound:latest"
+    container_name: unbound
+    restart: unless-stopped
+    hostname: "unbound"
+    volumes:
+      - "./unbound:/opt/unbound/etc/unbound/"
+    networks:
+      docker_net:
+        ipv4_address: 172.22.0.200
+        
+  pihole:
+    depends_on: [unbound]
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    hostname: pihole
+    dns:
+      - 127.0.0.1
+      - 172.22.0.200 # Points to unbound
+    volumes:
+      - "./etc-pihole/:/etc/pihole/"
+      - "./etc-dnsmasq.d/:/etc/dnsmasq.d/"
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+   #cap_add:
+      #- NET_ADMIN
+    environment:
+      - TZ=${TZ}
+      - ServerIP=172.22.0.100 # Internal IP of pihole
+      - PIHOLE_DNS_=172.22.0.200;172.22.0.200
+      - VIRTUAL_HOST=dns.${MYDOMAIN}
+      - NETWORK_ACCESS=internal
+      - WEBPASSWORD=password
+    networks:
+      docker_net:
+        ipv4_address: 172.22.0.100
