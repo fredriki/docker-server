@@ -9,7 +9,6 @@ It contains the domain name and time zone.
 ## TODO
 ### 1.0
 - [ ] List all packages that should be installed in nextcloud in its install.sh
-- [ ] Backup script
 ### 2.0
 - [ ] Add media stack
 - [ ] Add linux iso downloader to media stack
