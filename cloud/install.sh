@@ -14,8 +14,8 @@ echo MYSQL_PASSWORD=$(echo $RANDOM | sha256sum | head -c 20; echo;) >> .env
 # Let user choose admin user name and password
 # will also be stored readable in .env
 
-read -p 'Admin user name: ' adm_usr
-read -sp 'Admin password: ' adm_pw
+read -p 'Admin user name for Nextcloud: ' adm_usr
+read -sp 'Admin password for Nextcloud: ' adm_pw
 echo "This can later be found in .env in the cloud folder"
 echo NEXTCLOUD_ADMIN_USER=${adm_usr} >> .env
 echo NEXTCLOUD_ADMIN_PASSWORD=${adm_pw} >> .env
@@ -36,3 +36,10 @@ echo ""
 # Installing desired nextcloud packages/apps
 INSTALL="docker-compose exec -u www-data nc php occ app:install"
 ${INSTALL} music
+${INSTALL} maps
+${INSTALL} recognize
+${INSTALL} previewgenerator
+${INSTALL} memories
+docker-compose exec -u www-data nc php occ memories:index
+${INSTALL} richdocuments
+${INSTALL} passwords

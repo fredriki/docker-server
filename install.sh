@@ -30,6 +30,6 @@ install_docker ()
    sudo docker network create proxy_net
 }
 
-set_env
 install_certbot
 install_docker
+set_env
