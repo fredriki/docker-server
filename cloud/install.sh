@@ -41,5 +41,4 @@ ${INSTALL} recognize
 ${INSTALL} previewgenerator
 ${INSTALL} memories
 docker-compose exec -u www-data nc php occ memories:index
-${INSTALL} richdocuments
 ${INSTALL} passwords
