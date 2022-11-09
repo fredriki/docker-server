@@ -16,7 +16,7 @@ services:
     volumes:
       - ./nginxproxy/logs:/var/log/nginx
       - ./nginxproxy/nginx/conf.d:/etc/nginx/conf.d
-      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf
+      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf:ro
       - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf:ro
       - /etc/letsencrypt/live/${MYDOMAIN}:/etc/nginx/certs:ro
 
@@ -31,6 +31,6 @@ services:
       # needs to match the volumes under nginx
       - ./nginxproxy/logs:/var/log/nginx
       - ./nginxproxy/nginx/conf.d:/etc/nginx/conf.d
-      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf
-      - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf
+      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf:ro
+      - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf:ro
       - /etc/letsencrypt/live/${MYDOMAIN}:/etc/nginx/certs:ro
