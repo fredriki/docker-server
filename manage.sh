@@ -11,6 +11,15 @@ cert ()
     echo "/etc/letsencrypt/live/${MYDOMAIN}/privkey.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.key"
 }
 
+stop ()
+{
+    for d in */ ; do
+        cd ${d} 
+        docker-compose down 
+        cd ..
+    done
+}
+
 update ()
 {
     for d in */ ; do
@@ -24,6 +33,7 @@ update ()
 
 reset ()
 {
+    stop 
     # Removes everything except managed by git, need to run install.sh after this
     sudo git clean -f -d -x
 }
