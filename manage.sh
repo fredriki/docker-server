@@ -8,7 +8,7 @@ cert ()
     sudo cp /etc/letsencrypt/live/${MYDOMAIN}/privkey.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.key
     echo "/etc/letsencrypt/live/${MYDOMAIN}/privkey.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.key"
     sudo cp /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.crt
-    echo "/etc/letsencrypt/live/${MYDOMAIN}/privkey.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.key"
+    echo "cp /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.crt"
 }
 
 stop ()
