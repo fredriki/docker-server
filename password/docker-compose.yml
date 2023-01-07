@@ -1,0 +1,17 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: docker_net 
+      
+services:
+  vaultwarden:
+    image: vaultwarden/server
+    container_name: password
+    restart: unless-stopped
+    volumes:
+      - ./vaultwarden:/data
+    environment:
+      - VIRTUAL_HOST=password.${MYDOMAIN}
+
