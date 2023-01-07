@@ -35,10 +35,8 @@ echo ""
 
 # Installing desired nextcloud packages/apps
 INSTALL="docker-compose exec -u www-data nc php occ app:install"
-${INSTALL} music
 ${INSTALL} maps
 ${INSTALL} recognize
 ${INSTALL} previewgenerator
 ${INSTALL} memories
 docker-compose exec -u www-data nc php occ memories:index
-${INSTALL} passwords
