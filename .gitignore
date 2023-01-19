@@ -1,7 +1,9 @@
 **/.env
 **/*.bak
 common.env
-filesynchbrowser/data
-filesynchbrowser/syncthing
-filesynchbrowser/filebrowser
-filesynchbrowser/photoview
+
+filesyncbrowser/data/
+filesyncbrowser/filebrowser/
+filesyncbrowser/photoview/
+filesyncbrowser/syncthing/
+
