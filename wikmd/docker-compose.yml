@@ -12,6 +12,7 @@ services:
     environment:
       - VIRTUAL_HOST=wiki.${MYDOMAIN}
       - VIRTUAL_PORT=5000
+      - NETWORK_ACCESS=internal
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
