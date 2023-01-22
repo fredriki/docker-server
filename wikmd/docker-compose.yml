@@ -1,0 +1,21 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: proxy_net 
+      
+services:
+  wikmd:
+    image: linbreux/wikmd:latest
+    container_name: wikmd
+    environment:
+      - VIRTUAL_HOST=wiki.${MYDOMAIN}
+      - VIRTUAL_PORT=5000
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./wiki:/wiki
+
+    restart: unless-stopped
