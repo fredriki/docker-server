@@ -2,11 +2,6 @@
 **/*.bak
 common.env
 
-filesyncbrowser/data/
-filesyncbrowser/filebrowser/
-filesyncbrowser/photoview/
-filesyncbrowser/syncthing/
-
 proxy/nginxproxy/
 wikmd/wiki/
 
