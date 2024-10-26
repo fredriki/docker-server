@@ -20,7 +20,7 @@ services:
       - TZ=${TZ}
       - LLDAP_JWT_SECRET=${LLDAP_JWT_SECRET}
       - LLDAP_KEY_SEED=${LLDAP_KEY_SEED}
-      - LLDAP_LDAP_BASE_DN=dc=1a,dc=nu
+      - LLDAP_LDAP_BASE_DN=dc=domain,dc=com
       # If using LDAPS, set enabled true and configure cert and key path
       # - LLDAP_LDAPS_OPTIONS__ENABLED=true
       # - LLDAP_LDAPS_OPTIONS__CERT_FILE=/path/to/certfile.crt
