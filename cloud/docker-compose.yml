@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  nextcloud:
+    image: nextcloud
+    restart: always
+
+    volumes:
+      - ./nextcloud/html:/var/www/html
+      - ./nextcloud/apps:/var/www/html/custom_apps
+      - ./nextcloud/config:/var/www/html/config
+      - ./nextcloud/data:/var/www/html/data
+    networks:
+      - proxy
+      - redisnet
+      - dbnet
+    environment:
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${MYDOMAIN}
+    env_file:
+      - .env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${MYDOMAIN}`)
+      - traefik.http.routers.nextcloud.middlewares=nextcloud-dav,secHeaders@file
+      - traefik.http.middlewares.nextcloud-dav.replacepathregex.regex=^/.well-known/ca(l|rd)dav
+      - traefik.http.middlewares.nextcloud-dav.replacepathregex.replacement=/remote.php/dav/
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - redisnet
+    expose:
+      - 6379
+      
+  db:
+    image: mariadb:10.5
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - ./nextcloud/db:/var/lib/mysql
+    networks:
+      - dbnet
+    expose:
+      - 3306
+    env_file:
+      - .env
+      
+networks:
+  proxy:
+    external: true
+  redisnet:
+  dbnet:
