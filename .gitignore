@@ -9,3 +9,7 @@ filesyncbrowser/syncthing/
 
 proxy/nginxproxy/
 wikmd/wiki/
+
+cloud/nextcloud/
+
+ldap/lldap/
