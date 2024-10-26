@@ -1,36 +1,128 @@
-version: '3'
+version: '3.9'
+
+services:
+  proxy:
+    image: traefik:v3.1
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - proxy
+      - socket
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - /var/log:/var/log
+    command:
+      - --api.dashboard=true
+      - --log.level=INFO
+      #- --log.filepath=/var/log/traefik.log
+      - --accesslog=true
+      #- --accesslog.filepath=/var/log/traefik-access.log
+      - --providers.docker.network=proxy
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.endpoint=tcp://socketproxy:2375
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.asDefault=true 
+      #- --entrypoints.websecure.http.tls.certresolver=myresolver
+      #- --certificatesresolvers.myresolver.acme.email=mail@example.com
+      #- --certificatesresolvers.myresolver.acme.tlschallenge=true
+      #- --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
+      - traefik.http.routers.mydashboard.service=api@internal
+      #- traefik.http.routers.mydashboard.middlewares=myauth
+      #- traefik.http.middlewares.myauth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+
+  whoami:
+    image: traefik/whoami
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mywhoami.rule=Host(`whoami.${MYDOMAIN}`) || Host(`www.whoami.${MYDOMAIN}`)
+      #- traefik.http.services.mywhoami.loadbalancer.server.port=80
+
+      - traefik.http.middlewares.mywwwredirect.redirectregex.regex=^https://www\.(.*)
+      - traefik.http.middlewares.mywwwredirect.redirectregex.replacement=https://$${1}
+      - traefik.http.routers.mywhoami.middlewares=mywwwredirect
+
+  socketproxy:
+    image: node:lts-alpine
+    networks:
+      - socket
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        cat <<EOF > server.js
+        const http = require('http')
+
+        const prefixes = [
+          '/v1.24/containers',
+          '/v1.24/services',
+          '/v1.24/version',
+          '/v1.24/networks',
+          '/v1.24/events',
+          '/v1.24/tasks'
+        ]
+
+        const server = http.createServer((req, res) => {
+            if (process.env.LOG) {
+              console.log(new Date().toISOString(), req.method, req.url)
+            }
+
+            if (req.method != 'GET' || !prefixes.some(prefix => req.url.startsWith(prefix))) {
+              console.log(new Date().toISOString(), 'FORBIDDEN', req.method, req.url)
+              res.statusCode = 403
+              res.end('Forbidden: ' + req.method + ' ' + req.url)
+              return
+            }
+
+            const options = {
+                socketPath: '/var/run/docker.sock',
+                method: req.method,
+                path: req.url,
+                headers: req.headers,
+            }
+
+            const proxy = http.request(options, (targetRes) => {
+                res.writeHead(targetRes.statusCode, targetRes.headers)
+                targetRes.pipe(res, { end: true })
+            })
+
+            proxy.on('error', (err) => {
+                console.log(new Date().toISOString(), 'Proxy error:', err)
+                res.statusCode = 500
+                res.end('Server error')
+            })
+
+            req.pipe(proxy, { end: true })
+        })
+
+        server.listen(2375, '0.0.0.0', () => {
+            console.log('Server running on port 2375')
+        })
+        EOF
+        node server.js
+    expose:
+      - 2375
+    environment:
+      - LOG=true
 
 networks:
-  default:
-    external:
-      name: proxy_net 
-      
-services:
-  nginx:
-    image: nginx
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginxproxy/logs:/var/log/nginx
-      - ./nginxproxy/nginx/conf.d:/etc/nginx/conf.d
-      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf:ro
-      - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf:ro
-      - /etc/letsencrypt/live/${MYDOMAIN}:/etc/nginx/certs:ro
+  proxy:
+    name: proxy
+#    external: true
+  socket:
+    name: socket
+    attachable: true
 
 
-  dockergen:
-    image: nginxproxy/docker-gen
-    restart: unless-stopped
-    command: -notify-sighup nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginxtmpl/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl
-      # needs to match the volumes under nginx
-      - ./nginxproxy/logs:/var/log/nginx
-      - ./nginxproxy/nginx/conf.d:/etc/nginx/conf.d
-      - ./nginxtmpl/network_internal.conf:/etc/nginx/network_internal.conf:ro
-      - ./nginxtmpl/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf:ro
-      - /etc/letsencrypt/live/${MYDOMAIN}:/etc/nginx/certs:ro
+
