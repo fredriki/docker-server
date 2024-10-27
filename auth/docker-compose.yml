@@ -3,41 +3,55 @@ version: "3.9"
 services:
   ldap:
     image: lldap/lldap:stable
-    #ports:
-      # For LDAP, not recommended to expose, see Usage section.
-      #- "3890:3890"
-      # For LDAPS (LDAP Over SSL), enable port if LLDAP_LDAPS_OPTIONS__ENABLED set true, look env below
-      #- "6360:6360"
-      # For the web front-end
-      #- "17170:17170"
+    container_name: lldap
     volumes:
-      # - "lldap_data:/data"
-      # Alternatively, you can mount a local folder
       - "./lldap:/data"
     environment:
-      - UID=1000
-      - GID=1000
       - TZ=${TZ}
-      - LLDAP_JWT_SECRET=${LLDAP_JWT_SECRET}
       - LLDAP_KEY_SEED=${LLDAP_KEY_SEED}
-      - LLDAP_LDAP_BASE_DN=dc=domain,dc=com
-      # If using LDAPS, set enabled true and configure cert and key path
-      # - LLDAP_LDAPS_OPTIONS__ENABLED=true
-      # - LLDAP_LDAPS_OPTIONS__CERT_FILE=/path/to/certfile.crt
-      # - LLDAP_LDAPS_OPTIONS__KEY_FILE=/path/to/keyfile.key
-      # You can also set a different database:
-      # - LLDAP_DATABASE_URL=mysql://mysql-user:password@mysql-server/my-database
-      # - LLDAP_DATABASE_URL=postgres://postgres-user:password@postgres-server/my-database
+      - LLDAP_JWT_SECRET=${LLDAP_JWT_SECRET}
+      - LLDAP_LDAP_BASE_DN=${BASE_DN}
+      - LLDAP_ADMIN_USERNAME=${LLDAP_ADMIN_USERNAME}
+      - LLDAP_ADMIN_PASSWORD=${LLDAP_ADMIN_PASSWORD}
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ldap.rule=Host(`ldap.${MYDOMAIN}`)
+      - traefik.http.routers.ldap.rule=Host(`lldap.${MYDOMAIN}`)
       - traefik.http.services.labels.loadbalancer.server.port=17170
     networks:
       - proxy
-      - ldap
+      - auth
+    ports:
+      - "17170:17170"
+
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    volumes:
+      - ./authelia:/config
+    networks:
+      - proxy
+      - auth
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.authelia.rule=Host(`authelia.${MYDOMAIN}`)'
+      - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/authz/forward-auth' 
+      - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
+      - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'  
+    restart: unless-stopped
+    healthcheck:
+      ## In production the healthcheck section should be commented.
+      disable: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD=${LLDAP_AUTHELIA_PASSWORD}
+      - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN=${BASE_DN}
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY=${AUTHELIA_STORAGE_ENCRYPTION_KEY}
+      
 
 networks:
   proxy:
     external: true
-  ldap:
-    name: ldap
+  auth:
+    name: auth
