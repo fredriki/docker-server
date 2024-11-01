@@ -17,3 +17,6 @@ auth/authelia/notification.txt
 # to unignore
 # git update-index --no-assume-unchanged auth/authelia/access_rules.yml
 auth/authelia/access_rules.yml
+
+
+wiki/wikmd/
