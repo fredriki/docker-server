@@ -1,22 +1,25 @@
 version: '3'
-
-networks:
-  default:
-    external:
-      name: proxy_net 
-      
+     
 services:
   wiki:
     image: linbreux/wikmd:latest
+    container_name: wiki
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wiki.rule=Host(`wiki.${MYDOMAIN}`)"
+      - "traefik.http.routers.wiki.middlewares=authelia@docker"
+      - "traefik.http.services.wiki.loadbalancer.server.port=5000" 
+    networks:
+      - proxy
+
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
     volumes:
       - ./wiki:/wiki
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.wiki.rule=Host(`wiki.${MYDOMAIN}`)
-      - traefik.http.services.labels.loadbalancer.server.port=5000
-
     restart: unless-stopped
+
+networks:
+  proxy:
+    external: true
