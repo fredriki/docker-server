@@ -8,8 +8,8 @@ echo MYSQL_HOST=db >> .env
 echo REDIS_HOST=redis >> .env
 echo MYSQL_DATABASE=nextcloud >> .env
 echo MYSQL_USER=nextcloud >> .env
-echo MYSQL_ROOT_PASSWORD=$(echo $RANDOM | sha256sum | head -c 20; echo;) >> .env
-echo MYSQL_PASSWORD=$(echo $RANDOM | sha256sum | head -c 20; echo;) >> .env
+echo MYSQL_ROOT_PASSWORD=$(openssl rand -base64 18 ; echo;) >> .env
+echo MYSQL_PASSWORD=$(openssl rand -base64 18 ; echo;) >> .env
 
 # Let user choose admin user name and password
 # will also be stored readable in .env
@@ -35,4 +35,4 @@ echo ""
 
 # Installing desired nextcloud packages/apps
 INSTALL="docker-compose exec -u www-data nc php occ app:install"
-${INSTALL} music
+${INSTALL} memories

@@ -27,10 +27,22 @@ install_docker ()
 {
    sudo apt install docker docker-compose
    sudo usermod -aG docker ${USER}
-   sudo docker network create proxy_net
+   #sudo docker network create proxy_net
+}
+
+install_lldap_cli_deps ()
+{
+    # https://github.com/Zepmann/lldap-cli?tab=readme-ov-file#requirements
+    sudo apt install curl jq sed grep coreutils
+}
+
+install_genereal_deps ()
+{
+    sudo apt install openssl
 }
 
 sudo apt update
+install_lldap_cli_deps
 install_certbot
 install_docker
 set_env
