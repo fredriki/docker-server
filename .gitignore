@@ -11,4 +11,9 @@ auth/lldap/
 auth/authelia/cookies.yml
 auth/authelia/db.sqlite3
 auth/authelia/notification.txt
+
+# to ignore
+# git update-index --assume-unchanged auth/authelia/access_rules.yml
+# to unignore
+# git update-index --no-assume-unchanged auth/authelia/access_rules.yml
 auth/authelia/access_rules.yml
