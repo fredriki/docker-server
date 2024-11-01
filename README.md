@@ -64,3 +64,10 @@ Nextcloud, some customization to get everything to work is needed.
 - [ ] Add homepage
 
 
+## Style notes
+One can see in the create_template_service.sh how naming in general is.
+
+Important to differantiate services and container/images implementing them.
+
+For example, wiki is the service, wikmd is the image implementing the service.
+Folder is therefore named wiki, but wikmd data is in folder named wikmd.
