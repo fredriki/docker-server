@@ -56,6 +56,30 @@ authentication_backend:
     # set as environment in docker-compose.yml
 
 
+
+##
+## WebAuthn Configuration
+##
+## Parameters used for WebAuthn.
+# webauthn:
+  ## Disable WebAuthn.
+  # disable: false
+
+  ## The interaction timeout for WebAuthn dialogues in the duration common syntax.
+  # timeout: '60 seconds'
+
+  ## The display name the browser should show the user for when using WebAuthn to login/register.
+  # display_name: 'Authelia'
+
+  ## Conveyance preference controls if we collect the attestation statement including the AAGUID from the device.
+  ## Options are none, indirect, direct.
+  # attestation_conveyance_preference: 'indirect'
+
+  ## User verification controls if the user must make a gesture or action to confirm they are present.
+  ## Options are required, preferred, discouraged.
+  # user_verification: 'preferred'
+  
+
 ##
 ## Password Policy Configuration.
 ##
