@@ -45,5 +45,4 @@ new_rule="
       policy: one_factor
 "
 
-
 echo "$new_rule" >> "$ACCESS_RULES_FILE"
