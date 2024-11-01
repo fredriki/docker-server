@@ -17,7 +17,7 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./wiki:/wiki
+      - ./wikmd:/wiki
     restart: unless-stopped
 
 networks:
