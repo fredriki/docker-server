@@ -49,6 +49,25 @@ access_control:
     - domain: 'public.example.com'
       policy: 'bypass'
 
+    # Example of allowing everyone on internal network reach internal.example.com
+    # default_policy is otherwise applied
+    - domain: 'internal.example.com'
+      policy: 'bypass'
+      networks:
+        - 'internal'
+
+    ## Below is not tested in practice
+    # To reach admin.domain.com user must be member of group admin
+    - domain: admin.domain.com
+      subject: "group:admin"
+      policy: one_factor
+      networks:
+        - 'internal'
+    # In addition use two_factor if external network
+    - domain: admin.domain.com
+      subject: "group:admin"
+      policy: two_factor
+
     ## Domain Regex examples. Generally we recommend just using a standard domain.
     # - domain_regex: '^(?P<User>\w+)\.example\.com$'
     #   policy: 'one_factor'
