@@ -6,7 +6,11 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+
+# Setting up variables
 SERVICE_NAME=$1
+ACCESS_RULES_FILE="auth/authelia/access_rules.yml"
+source common.env
 
 # Create directory with service name
 mkdir -p "$SERVICE_NAME"
@@ -33,4 +37,13 @@ networks:
       
 EOL
 
-echo "docker-compose.yml for service $SERVICE_NAME created successfully in $SERVICE_NAME directory."
+
+# Define the new access rule
+new_rule="
+    - domain: ${SERVICE_NAME}.${MYDOMAIN}
+      subject: "group:${SERVICE_NAME}"
+      policy: one_factor
+"
+
+
+echo "$new_rule" >> "$ACCESS_RULES_FILE"
