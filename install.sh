@@ -7,6 +7,12 @@ set_env ()
     echo MYDOMAIN=${domain} > common.env
     echo TZ=$(cat /etc/timezone) >> common.env
 
+    # Convert MYDOMAIN into the desired format
+    IFS='.' read -r subdomain topdomain <<< "$domain"
+    output="dc=${subdomain},dc=${topdomain}"
+    # Print the output to .env
+    echo BASE_DN=${output} >> common.env
+
     # Copy common environment and run containers install.sh if exist
     for d in */ ; do
         cd ${d}
@@ -30,11 +36,6 @@ install_docker ()
    #sudo docker network create proxy_net
 }
 
-install_lldap_cli_deps ()
-{
-    # https://github.com/Zepmann/lldap-cli?tab=readme-ov-file#requirements
-    sudo apt install curl jq sed grep coreutils
-}
 
 install_genereal_deps ()
 {
@@ -42,7 +43,18 @@ install_genereal_deps ()
 }
 
 sudo apt update
-install_lldap_cli_deps
 install_certbot
 install_docker
+
+base_access_control="
+access_control:
+  default_policy: 'deny'
+
+  networks:
+    - name: 'internal'
+      networks:
+        - '192.168.0.0/24'
+"
+echo ${base_access_control} > auth/authelia/access_control.yml
+
 set_env

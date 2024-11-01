@@ -13,14 +13,9 @@ echo LLDAP_ADMIN_USERNAME=${adm_usr} >> .env
 echo LLDAP_ADMIN_PASSWORD=${adm_pw} >> .env
 
 
-# Parsing MYDOMAIN to dc dc thingie
-# Read the text file
+
+# Getting variables from .env
 source .env
-# Convert MYDOMAIN into the desired format
-IFS='.' read -r subdomain domain <<< "$MYDOMAIN"
-output="dc=${subdomain},dc=${domain}"
-# Print the output to .env
-echo BASE_DN=${output} >> .env
 
 # Creating a authelia user so authelia can talk to lldap
 docker-compose up -d lldap
@@ -35,6 +30,10 @@ echo LLDAP_AUTHELIA_PASSWORD=${LLDAP_AUTHELIA_PASSWORD} >> .env
 sleep 10
 
 echo "Getting cli for lldap"
+
+# https://github.com/Zepmann/lldap-cli?tab=readme-ov-file#requirements
+sudo apt install curl jq sed grep coreutils
+
 git clone https://github.com/Zepmann/lldap-cli.git
 cd lldap-cli
 eval $(./lldap-cli -D ${adm_usr} -w ${adm_pw} login)
