@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  ldap:
+  lldap:
     image: lldap/lldap:stable
     container_name: lldap
     volumes:
@@ -26,6 +26,11 @@ services:
   authelia:
     image: authelia/authelia
     container_name: authelia
+    command:
+      - 'authelia'
+      - '--config=/config/configuration.yml'
+      - '--config=/config/cookies.yml'
+      - '--config=/config/access_rules.yml'
     volumes:
       - ./authelia:/config
     networks:
@@ -48,6 +53,9 @@ services:
       - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD=${LLDAP_AUTHELIA_PASSWORD}
       - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN=${BASE_DN}
       - AUTHELIA_STORAGE_ENCRYPTION_KEY=${AUTHELIA_STORAGE_ENCRYPTION_KEY}
+      - AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET=${AUTHELIA_PW_RESET_JWT_SECRET}
+      - AUTHELIA_SESSION_SECRET=${AUTHELIA_SESSION_SECRET}
+
       
 
 networks:
