@@ -41,17 +41,25 @@ services:
 
   whoami:
     image: traefik/whoami
+    container_name: whoami
     networks:
       - proxy
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.mywhoami.rule=Host(`whoami.${MYDOMAIN}`) || Host(`www.whoami.${MYDOMAIN}`)
-      #- traefik.http.services.mywhoami.loadbalancer.server.port=80
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.${MYDOMAIN}`)"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
 
-      - traefik.http.middlewares.mywwwredirect.redirectregex.regex=^https://www\.(.*)
-      - traefik.http.middlewares.mywwwredirect.redirectregex.replacement=https://$${1}
-      - traefik.http.routers.mywhoami.middlewares=mywwwredirect
-
+  whoamisecure:
+    image: traefik/whoami
+    container_name: whoamisecure
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoamisecure.rule=Host(`whoamisecure.${MYDOMAIN}`)"
+      - "traefik.http.routers.whoamisecure.middlewares=authelia@docker"
+      - "traefik.http.services.whoamisecure.loadbalancer.server.port=80"
+      
   socketproxy:
     image: node:lts-alpine
     networks:
@@ -119,7 +127,7 @@ services:
 networks:
   proxy:
     name: proxy
-#    external: true
+
   socket:
     name: socket
     attachable: true

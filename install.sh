@@ -54,6 +54,9 @@ access_control:
     - name: 'internal'
       networks:
         - '192.168.0.0/24'
+
+  rules:
+  
 "
 echo ${base_access_control} > auth/authelia/access_control.yml
 
