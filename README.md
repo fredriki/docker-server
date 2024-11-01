@@ -12,8 +12,6 @@ is expected to be provided where certbot usually puts them.
 Start with running install.sh
 
 
-
-
 ## Components
 
 ### Scripts
@@ -48,6 +46,14 @@ Nextcloud, some customization to get everything to work is needed.
 
 
 ## TODO
+- [x] LLDAP
+- [x] Authelia
+- [x] Traefik
+- [x] LLDAP and Authelia talking
+- [x] Authelia as middleware auth
+- [x] Wiki
+- [ ] Testing adding wiki group in lldap and have that as access rule
+- [ ] Testing install.sh and the whole shabang as it is
 - [ ] Password manager with LDAP connection (Vaultwarden?)
 - [ ] Nextcloud LDAP automatic integration during install
 - [ ] Email server
