@@ -8,3 +8,8 @@ wikmd/wiki/
 cloud/nextcloud/
 
 auth/lldap/
+auth/authelia/cookies.yml
+auth/authelia/access_rules.yml
+auth/authelia/db.sqlite3
+auth/authelia/notification.txt
+
