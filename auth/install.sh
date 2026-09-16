@@ -48,30 +48,4 @@ cd ..
 docker-compose down
 
 
-##################
-# AUTHELIA STUFF #
-##################
-
-# Create a own config files for cookies so we don't manage domain names
-# in a git-versioned file.
-cat >/authelia/cookies.yml <<EOL
-session:
-  name: 'authelia_session'
-  same_site: 'lax'
-  inactivity: '5m'
-  expiration: '1h'
-  remember_me: '1M'
-  cookies:
-    - domain: '${MYDOMAIN}'
-      authelia_url: 'https://authelia.${MYDOMAIN}'
-      default_redirection_url: 'https://${MYDOMAIN}'
-      name: 'authelia_session'
-      same_site: 'lax'
-      inactivity: '5m'
-      expiration: '1h'
-      remember_me: '1d'
-EOL
-
-echo AUTHELIA_STORAGE_ENCRYPTION_KEY=$(echo $RANDOM | sha256sum | head -c 32; echo;) >> .env
-echo AUTHELIA_PW_RESET_JWT_SECRET=$(echo $RANDOM | sha256sum | head -c 32; echo;) >> .env
-echo AUTHELIA_SESSION_SECRET=$(echo $RANDOM | sha256sum | head -c 32; echo;) >> .env
+# Really questioning cloning a repo just to add a user via bash instead of logging in and doing it...
