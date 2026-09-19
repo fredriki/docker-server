@@ -34,25 +34,17 @@ To ease creating new services.
 Traefik as reverse-proxy and a docker-socket proxy.
 
 ### Auth
-LLDAP combined with Authelia. Use with traefik middleware.
-
-Note: One must customize auth/authelia/access_rules.yml to suit one needs
-
-### Wiki
-Wikmd as simple wiki, is nice.
-
-### Cloud
-Nextcloud, some customization to get everything to work is needed.
+LLDAP combined with Tinyauth. Use with traefik middleware.
 
 
 ## TODO
 - [x] LLDAP
-- [x] Authelia
+- [x] Tinyauth
 - [x] Traefik
-- [x] LLDAP and Authelia talking
-- [x] Authelia as middleware auth
-- [x] Wiki
-- [x] Testing adding wiki group in lldap and have that as access rule
+- [x] LLDAP and Tinyauth talking
+- [x] Tinyauth as middleware auth
+- [-] Wiki
+- [-] Testing adding wiki group in lldap and have that as access rule
 - [ ] Testing install.sh and the whole shabang as it is
 - [ ] Password manager with LDAP connection (Vaultwarden?)
 - [ ] Nextcloud LDAP automatic integration during install
