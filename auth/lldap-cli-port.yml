@@ -1,0 +1,4 @@
+services:
+  lldap:
+    ports:
+      - "17170:17170"
