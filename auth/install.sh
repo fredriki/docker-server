@@ -23,6 +23,9 @@ source .env
 # This is done by starting lldap and running lldap-cli to create a user
 # The user has read only
 
+# Add port to expose when using lldap-cli
+mv lldap-cli-port.yml docker-compose.override.yml
+
 # Starting lldap only
 docker compose up -d lldap
 
@@ -46,3 +49,6 @@ lldap-cli user group add tinyauth lldap_strict_readonly
 cd ..
 
 docker compose down
+
+# Remove exposed port
+mv docker-compose.override.yml lldap-cli-port.yml
