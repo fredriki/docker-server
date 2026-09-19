@@ -6,11 +6,9 @@
 echo LLDAP_JWT_SECRET=$(openssl rand -base64 30 ; echo;) >> .env
 echo LLDAP_KEY_SEED=$(openssl rand -base64 30 ; echo;) >> .env
 
-read -p 'LLDAP admin user name: ' adm_usr
 read -sp 'LLDAP admin password: ' adm_pw
 echo "This can later be found in .env in the auth folder"
-echo LLDAP_ADMIN_USERNAME=${adm_usr} >> .env
-echo LLDAP_ADMIN_PASSWORD=${adm_pw} >> .env
+echo LLDAP_LDAP_USER_PASS=${adm_pw} >> .env
 
 # Getting variables from .env
 source .env
