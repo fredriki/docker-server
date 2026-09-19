@@ -40,6 +40,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
+      - TINYAUTH_APPURL=https://tinyauth.${MYDOMAIN}
       - TINYAUTH_LDAP_ADDRESS=ldap://lldap:3890
       - TINYAUTH_LDAP_BINDDN=uid=tinyauth,ou=people,${BASE_DN}
       - TINYAUTH_LDAP_BINDPASSWORD=${LLDAP_TINYAUTH_PASSWORD}
