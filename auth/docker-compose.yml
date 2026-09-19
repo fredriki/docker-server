@@ -19,7 +19,7 @@ services:
       - auth
 
   tinyauth:
-    image: ghcr.io/jason-k/tinyauth:latest
+    image: ghcr.io/tinyauthapp/tinyauth:latest
     container_name: tinyauth
     volumes:
       - ./tinyauth:/config
