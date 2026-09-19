@@ -9,8 +9,7 @@ services:
       - LLDAP_KEY_SEED=${LLDAP_KEY_SEED}
       - LLDAP_JWT_SECRET=${LLDAP_JWT_SECRET}
       - LLDAP_LDAP_BASE_DN=${BASE_DN}
-      - LLDAP_ADMIN_USERNAME=${LLDAP_ADMIN_USERNAME}
-      - LLDAP_ADMIN_PASSWORD=${LLDAP_ADMIN_PASSWORD}
+      - LLDAP_LDAP_USER_PASS=${LLDAP_LDAP_USER_PASS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.ldap.rule=Host(`lldap.${MYDOMAIN}`)
