@@ -20,44 +20,33 @@ services:
     networks:
       - proxy
       - auth
-    ports:
-      - "17170:17170"
 
-  authelia:
-    image: authelia/authelia
-    container_name: authelia
-    command:
-      - 'authelia'
-      - '--config=/config/configuration.yml'
-      - '--config=/config/cookies.yml'
-      - '--config=/config/access_rules.yml'
+  tinyauth:
+    image: ghcr.io/jason-k/tinyauth:latest
+    container_name: tinyauth
     volumes:
-      - ./authelia:/config
+      - ./tinyauth:/config
     networks:
       - proxy
       - auth
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.authelia.rule=Host(`authelia.${MYDOMAIN}`)'
-      - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/authz/forward-auth' 
-      - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
-      - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'  
+      - 'traefik.http.routers.tinyauth.rule=Host(`tinyauth.${MYDOMAIN}`)'
+      - 'traefik.http.middlewares.tinyauth.forwardauth.address=http://tinyauth:3000/api/auth/traefik' 
+      - 'traefik.http.middlewares.tinyauth.forwardauth.trustForwardHeader=true'
+      - 'traefik.http.middlewares.tinyauth.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
     restart: unless-stopped
-    healthcheck:
-      ## In production the healthcheck section should be commented.
-      disable: true
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD=${LLDAP_AUTHELIA_PASSWORD}
-      - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN=${BASE_DN}
-      - AUTHELIA_STORAGE_ENCRYPTION_KEY=${AUTHELIA_STORAGE_ENCRYPTION_KEY}
-      - AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET=${AUTHELIA_PW_RESET_JWT_SECRET}
-      - AUTHELIA_SESSION_SECRET=${AUTHELIA_SESSION_SECRET}
-
+      - TINYAUTH_LDAP_ADDRESS=ldap://my-lldap-server:3890
+      - TINYAUTH_LDAP_BINDDN=uid=tinyauth,ou=people,${BASE_DN}
+      - TINYAUTH_LDAP_BINDPASSWORD=${LLDAP_TINYAUTH_PASSWORD}
+      - TINYAUTH_LDAP_BASEDN=dc=${BASE_DN}
+      - TINYAUTH_LDAP_SEARCHFILTER=(uid=%s)
+      - TINYAUTH_LDAP_INSECURE=true
       
-
 networks:
   proxy:
     external: true
