@@ -12,8 +12,6 @@ echo "This can later be found in .env in the auth folder"
 echo LLDAP_ADMIN_USERNAME=${adm_usr} >> .env
 echo LLDAP_ADMIN_PASSWORD=${adm_pw} >> .env
 
-
-
 # Getting variables from .env
 source .env
 
@@ -26,7 +24,7 @@ source .env
 # The user has read only
 
 # Starting lldap only
-docker-compose up -d lldap
+docker compose up -d lldap
 
 # Creating password for tinyauth user
 LLDAP_TINYAUTH_PASSWORD=$(openssl rand -base64 30 ; echo;)
@@ -47,4 +45,4 @@ docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyath -p $
 lldap-cli user group add tinyauth lldap_strict_readonly
 cd ..
 
-docker-compose down
+docker compose down
