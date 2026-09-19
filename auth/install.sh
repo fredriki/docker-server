@@ -35,6 +35,9 @@ sudo apt install curl jq sed grep coreutils
 git clone https://github.com/Zepmann/lldap-cli.git
 cd lldap-cli
 
+echo "Sleeping 10s to let LLDAP fully start"
+sleep 10
+
 eval $(./lldap-cli -D admin -w ${adm_pw} login)
 lldap-cli user add tinyath tinyath@${MYDOMAIN} -p ${LLDAP_TINYAUTH_PASSWORD}
 #docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyath -p ${LLDAP_TINYAUTH_PASSWORD} --admin-username ${adm_usr} --admin-password ${adm_pw}
