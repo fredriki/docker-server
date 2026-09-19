@@ -25,7 +25,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.$SERVICE_NAME.rule=Host(\`${SERVICE_NAME}.\${MYDOMAIN}\`)"
-      - "traefik.http.routers.$SERVICE_NAME.middlewares=authelia@docker"
+      - "traefik.http.routers.$SERVICE_NAME.middlewares=tinyauth@docker"
       - "traefik.http.services.$SERVICE_NAME.loadbalancer.server.port=80"
     networks:
       - proxy
