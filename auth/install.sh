@@ -22,7 +22,7 @@ source .env
 # The user has read only
 
 # Starting lldap only
-docker compose up -d lldap -f docker-compose.yml -f lldap-cli-port.yml
+docker compose  -f docker-compose.yml -f lldap-cli-port.ymlup -d lldap
 
 # Creating password for tinyauth user
 LLDAP_TINYAUTH_PASSWORD=$(openssl rand -base64 30 ; echo;)
