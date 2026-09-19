@@ -40,7 +40,8 @@ sleep 10
 
 eval $(./lldap-cli -D admin -w ${adm_pw} login)
 ./lldap-cli user add tinyauth tinyauth@${MYDOMAIN}
-docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyauth -p ${LLDAP_TINYAUTH_PASSWORD} --admin-username ${adm_usr} --admin-password ${adm_pw}
+# For some reason setting password in command above is not working - doing it the long way below
+docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyauth -p ${LLDAP_TINYAUTH_PASSWORD} --admin-username admin --admin-password ${adm_pw}
 
 # Change between lldap_strict_readonly and lldap_password_manager depending on 
 # tinyauth should be able to manage passwords
