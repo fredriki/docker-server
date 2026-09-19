@@ -36,8 +36,8 @@ git clone https://github.com/Zepmann/lldap-cli.git
 cd lldap-cli
 
 eval $(./lldap-cli -D admin -w ${adm_pw} login)
-lldap-cli user add tinyath tinyath@${MYDOMAIN}
-docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyath -p ${LLDAP_TINYAUTH_PASSWORD} --admin-username ${adm_usr} --admin-password ${adm_pw}
+lldap-cli user add tinyath tinyath@${MYDOMAIN} -p ${LLDAP_TINYAUTH_PASSWORD}
+#docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyath -p ${LLDAP_TINYAUTH_PASSWORD} --admin-username ${adm_usr} --admin-password ${adm_pw}
 
 # Change between lldap_strict_readonly and lldap_password_manager depending on 
 # tinyauth should be able to manage passwords
