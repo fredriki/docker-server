@@ -36,8 +36,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
-      #- traefik.http.routers.mydashboard.middlewares=myauth
-      #- traefik.http.middlewares.myauth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+      #- "traefik.http.routers.whoami.middlewares=tinyauth"
 
   whoami:
     image: traefik/whoami
@@ -57,8 +56,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.whoamisecure.rule=Host(`whoamisecure.${MYDOMAIN}`)"
-      - "traefik.http.routers.whoamisecure.middlewares=authelia@docker"
       - "traefik.http.services.whoamisecure.loadbalancer.server.port=80"
+      - "traefik.http.routers.whoami.middlewares=tinyauth"
       
   socketproxy:
     image: node:lts-alpine
