@@ -17,35 +17,34 @@ echo LLDAP_ADMIN_PASSWORD=${adm_pw} >> .env
 # Getting variables from .env
 source .env
 
-# Creating a authelia user so authelia can talk to lldap
+##########################
+# LLDAP + TINYAUTH STUFF #
+##########################
+
+# Creating a tinyauth user so tinyauth can talk to lldap (get users)
+# This is done by starting lldap and running lldap-cli to create a user
+# The user has read only
+
+# Starting lldap only
 docker-compose up -d lldap
 
-echo "Waiting for everything to start"
-
-# openssl rand -base64 18
-# echo TEST=$(openssl rand -base64 30 ; echo;) >> test.env
-LLDAP_AUTHELIA_PASSWORD=$(openssl rand -base64 30 ; echo;)
-echo LLDAP_AUTHELIA_PASSWORD=${LLDAP_AUTHELIA_PASSWORD} >> .env
-
-sleep 10
+# Creating password for tinyauth user
+LLDAP_TINYAUTH_PASSWORD=$(openssl rand -base64 30 ; echo;)
+echo LLDAP_TINYAUTH_PASSWORD=${LLDAP_TINYAUTH_PASSWORD} >> .env
 
 echo "Getting cli for lldap"
-
 # https://github.com/Zepmann/lldap-cli?tab=readme-ov-file#requirements
 sudo apt install curl jq sed grep coreutils
 
 git clone https://github.com/Zepmann/lldap-cli.git
 cd lldap-cli
 eval $(./lldap-cli -D ${adm_usr} -w ${adm_pw} login)
-lldap-cli user add authelia authelia@${MYDOMAIN}
-docker exec lldap ./lldap_set_password -b http://localhost:17170 -u authelia -p ${LLDAP_AUTHELIA_PASSWORD} --admin-username ${adm_usr} --admin-password ${adm_pw}
+lldap-cli user add tinyath tinyath@${MYDOMAIN}
+docker exec lldap ./lldap_set_password -b http://localhost:17170 -u tinyath -p ${LLDAP_TINYAUTH_PASSWORD} --admin-username ${adm_usr} --admin-password ${adm_pw}
 
 # Change between lldap_strict_readonly and lldap_password_manager depending on 
-# authelia should be able to manage passwords
-lldap-cli user group add authelia lldap_strict_readonly
+# tinyauth should be able to manage passwords
+lldap-cli user group add tinyauth lldap_strict_readonly
 cd ..
 
 docker-compose down
-
-
-# Really questioning cloning a repo just to add a user via bash instead of logging in and doing it...
