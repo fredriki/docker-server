@@ -9,7 +9,6 @@ fi
 
 # Setting up variables
 SERVICE_NAME=$1
-ACCESS_RULES_FILE="auth/authelia/access_rules.yml"
 source common.env
 
 # Create directory with service name
@@ -36,13 +35,3 @@ networks:
     external: true
       
 EOL
-
-
-# Define the new access rule
-new_rule="
-    - domain: ${SERVICE_NAME}.${MYDOMAIN}
-      subject: "group:${SERVICE_NAME}"
-      policy: one_factor
-"
-
-echo "$new_rule" >> "$ACCESS_RULES_FILE"
