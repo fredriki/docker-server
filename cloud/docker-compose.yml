@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: lscr.io/linuxserver/nextcloud:latest
+    image: nextcloud
     restart: always
     volumes:
       - ./nextcloud/html:/var/www/html
@@ -12,8 +12,6 @@ services:
       - redisnet
       - dbnet
     environment:
-      - PUID=1000
-      - PGID=1000
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${MYDOMAIN}
     env_file:
       - .env
