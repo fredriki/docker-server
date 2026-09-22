@@ -23,7 +23,7 @@ echo NEXTCLOUD_ADMIN_PASSWORD=${adm_pw} >> .env
 # Starting nextcloud and waiting a while for DB and everything to be set up
 
 echo "Starting docker container... please wait"
-docker-compose up -d
+docker compose up -d
 echo "Sleeping for 1 minute to be sure that nextcloud is fully started"
 echo "|------------------------ sleeping ------------------------|"
 for i in {1..60}
@@ -34,5 +34,5 @@ done
 echo ""
 
 # Installing desired nextcloud packages/apps
-INSTALL="docker-compose exec -u www-data nc php occ app:install"
+INSTALL="docker compose exec -u www-data nc php occ app:install"
 ${INSTALL} memories
