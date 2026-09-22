@@ -46,18 +46,4 @@ sudo apt update
 install_certbot
 install_docker
 
-base_access_control="
-access_control:
-  default_policy: 'deny'
-
-  networks:
-    - name: 'internal'
-      networks:
-        - '192.168.0.0/24'
-
-  rules:
-  
-"
-echo ${base_access_control} > auth/authelia/access_control.yml
-
 set_env
