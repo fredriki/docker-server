@@ -2,7 +2,7 @@ services:
   nextcloud:
     image: nextcloud
     restart: always
-
+    user: "1000:1000"
     volumes:
       - ./nextcloud/html:/var/www/html
       - ./nextcloud/apps:/var/www/html/custom_apps
