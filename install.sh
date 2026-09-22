@@ -5,7 +5,7 @@ set_env ()
     # Setting common environment stuff
     read -p 'Domain name: ' domain
     echo MYDOMAIN=${domain} > common.env
-    echo TZ=$(cat /etc/timezone) >> common.env
+    echo "TZ=$(timedatectl show --property=Timezone --value)" >> common.env
 
     # Convert MYDOMAIN into the desired format
     IFS='.' read -r subdomain topdomain <<< "$domain"
