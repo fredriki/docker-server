@@ -34,5 +34,5 @@ done
 echo ""
 
 # Installing desired nextcloud packages/apps
-INSTALL="docker compose exec -u www-data nc php occ app:install"
+INSTALL="docker compose exec -u www-data nextcloud php occ app:install"
 ${INSTALL} memories
