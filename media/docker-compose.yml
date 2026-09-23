@@ -11,14 +11,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mydashboard.rule=Host(`jellyfin.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
+      - traefik.http.services.labels.loadbalancer.server.port=8096
     volumes:
       - ./jellyfin/library:/config
       - ./jellyfin/cache:/cache
       - /storage/docker-data/series:/data/tvshows
       - /storage/docker-data/movies:/data/movies
-    ports:
-      - 8096:8096
-      - 8920:8920 #optional
-      - 7359:7359/udp #optional
-      - 1900:1900/udp #optional
     restart: unless-stopped
