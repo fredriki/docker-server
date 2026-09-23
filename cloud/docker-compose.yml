@@ -18,6 +18,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${MYDOMAIN}`)
+      # Pass the original Host header to the container
+      - "traefik.http.services.nextcloud.loadbalancer.passhostheader=true"
+      # Apply middlewares for security headers and compression
       - "traefik.http.routers.nextcloud.middlewares=nextcloud-redirectregex1,nextcloud-redirectregex2,compresstraefik,nextcloud-securityheaders"
       # Define settings for the compression middleware
       - "traefik.http.middlewares.compresstraefik.compress=true"
