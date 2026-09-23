@@ -18,9 +18,21 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${MYDOMAIN}`)
-      - traefik.http.routers.nextcloud.middlewares=nextcloud-dav,secHeaders@file
-      - traefik.http.middlewares.nextcloud-dav.replacepathregex.regex=^/.well-known/ca(l|rd)dav
-      - traefik.http.middlewares.nextcloud-dav.replacepathregex.replacement=/remote.php/dav/
+      - "traefik.http.routers.nextcloud.middlewares=nextcloud-redirectregex1,nextcloud-redirectregex2,compresstraefik,nextcloud-securityheaders"
+      # Define settings for the compression middleware
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      # Settings for the first redirect regex middleware
+      - "traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.permanent=true"
+      - "traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.regex=https?://([^/]*)/.well-known/(card|cal)dav"
+      - "traefik.http.middlewares.nextcloud-redirectregex1.redirectregex.replacement=https://$${1}/remote.php/dav/"
+      # Settings for the second redirect regex middleware
+      - "traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.permanent=true"
+      - "traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.regex=https?://([^/]*)(/.well-known[^#]*)"
+      - "traefik.http.middlewares.nextcloud-redirectregex2.redirectregex.replacement=https://$${1}/index.php$${2}"
+      # Security headers settings specifically for Nextcloud
+      - "traefik.http.middlewares.nextcloud-securityheaders.headers.stsSeconds=15552000"
+      - "traefik.http.middlewares.nextcloud-securityheaders.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.nextcloud-securityheaders.headers.stsPreload=true"
 
   redis:
     image: redis:alpine
