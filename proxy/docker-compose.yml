@@ -1,4 +1,3 @@
-version: '3.9'
 
 services:
   proxy:
@@ -13,6 +12,9 @@ services:
       - TZ=${TZ}
     volumes:
       - /var/log:/var/log
+      - /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem:/etc/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/${MYDOMAIN}/privkey.pem:/etc/certs/privkey.pem:ro
+      - /etc/letsencrypt/archive/${MYDOMAIN}:/etc/letsencrypt/archive/${MYDOMAIN}:ro
     command:
       - --api.dashboard=true
       - --log.level=INFO
@@ -37,6 +39,8 @@ services:
       - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
       #- "traefik.http.routers.whoami.middlewares=tinyauth"
+      - "traefik.tls.stores.default.defaultcertificate.certfile=/etc/certs/fullchain.pem"
+      - "traefik.tls.stores.default.defaultcertificate.keyfile=/etc/certs/privkey.pem"
 
   whoami:
     image: traefik/whoami
