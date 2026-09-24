@@ -27,7 +27,7 @@ services:
       - --providers.docker.endpoint=tcp://socketproxy:2375
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entryPoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.asDefault=true 
