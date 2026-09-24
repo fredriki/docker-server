@@ -41,7 +41,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
-      - "traefik.http.routers.traefik.middlewares=tinyauth"
+      - traefik.http.routers.mydashboard.middlewares=tinyauth
 
   whoami:
     image: traefik/whoami
