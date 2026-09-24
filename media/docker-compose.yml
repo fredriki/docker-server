@@ -1,3 +1,4 @@
+---
 services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
@@ -6,11 +7,10 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      #- JELLYFIN_PublishedServerUrl=http://192.168.0.5 #optional
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${MYDOMAIN}`)"
-      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.rule=Host(`jellyfin.${MYDOMAIN}`)
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     volumes:
       - ./jellyfin/library:/config
       - ./jellyfin/cache:/cache
@@ -19,25 +19,24 @@ services:
     restart: unless-stopped
     networks:
       - proxy
-
   jellyseerr:
-     image: fallenbagel/jellyseerr:latest
-     container_name: jellyseerr
-     environment:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
       - LOG_LEVEL=info
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.${MYDOMAIN}`)"
-      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
-     volumes:
+      - traefik.enable=true
+      - traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.${MYDOMAIN}`)
+      - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
+    volumes:
       - ./jellyseerr/config:/app/config
-     restart: unless-stopped
-     networks:
+    restart: unless-stopped
+    networks:
       - proxy
- radarr:
+  radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
@@ -45,15 +44,14 @@ services:
       - PGID=1000
       - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.radarr.rule=Host(`radarr.${MYDOMAIN}`)"
-      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=Host(`radarr.${MYDOMAIN}`)
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
     volumes:
       - ./radarr/config:/config
       - /storage/docker-data/movies:/movies
       - /storage/docker-data/downloads:/downloads
     restart: unless-stopped
-
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -62,15 +60,14 @@ services:
       - PGID=1000
       - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.${MYDOMAIN}`)"
-      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${MYDOMAIN}`)
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
     volumes:
       - ./sonarr/config:/config
       - /storage/docker-data/series:/tv
       - /storage/docker-data/downloads:/downloads
     restart: unless-stopped
-
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -79,13 +76,12 @@ services:
       - PGID=1000
       - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${MYDOMAIN}`)"
-      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${MYDOMAIN}`)
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
     volumes:
       - ./prowlarr/config:/config
     restart: unless-stopped
-
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
@@ -95,17 +91,13 @@ services:
       - WEBUI_PORT=8080
       - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${MYDOMAIN}`)"
-      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${MYDOMAIN}`)
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
     volumes:
       - ./qbittorrent/config:/config
       - /storage/docker-data/downloads:/downloads
-#    ports: # If forwarded from router
-#      - 6881:6881
-#      - 6881:6881/udp
     restart: unless-stopped
-
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
@@ -114,18 +106,14 @@ services:
       - PGID=1000
       - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.bazarr.rule=Host(`bazarr.${MYDOMAIN}`)"
-      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+      - traefik.enable=true
+      - traefik.http.routers.bazarr.rule=Host(`bazarr.${MYDOMAIN}`)
+      - traefik.http.services.bazarr.loadbalancer.server.port=6767
     volumes:
       - ./bazarr/config:/config
       - /storage/docker-data/movies:/movies
       - /storage/docker-data/series:/tv
-    restart: unless-stopped      
-    
+    restart: unless-stopped
 networks:
   proxy:
     external: true
-
-# https://jellywatch.app/blog/jellyfin-full-automation-guide-radarr-sonarr-bazarr-jellyseerr-2026
-
