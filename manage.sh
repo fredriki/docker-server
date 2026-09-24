@@ -4,11 +4,6 @@ cert ()
     echo "Fixing certificate for ${MYDOMAIN} :)"
 
     sudo certbot certonly --manual --preferred-challenge dns -d ${MYDOMAIN} -d "*.${MYDOMAIN}"
-
-    sudo cp /etc/letsencrypt/live/${MYDOMAIN}/privkey.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.key
-    echo "/etc/letsencrypt/live/${MYDOMAIN}/privkey.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.key"
-    sudo cp /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.crt
-    echo "cp /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem /etc/letsencrypt/live/${MYDOMAIN}/${MYDOMAIN}.crt"
 }
 
 stop ()
