@@ -18,3 +18,9 @@ services:
       - /storage/docker-data/series:/data/tvshows
       - /storage/docker-data/movies:/data/movies
     restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
