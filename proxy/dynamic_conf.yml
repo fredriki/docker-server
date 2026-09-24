@@ -1,6 +1,0 @@
-tls:
-  stores:
-    default:
-      defaultCertificate:
-        certFile: /etc/letsencrypt/certs/fullchain.pem
-        keyFile: /etc/letsencrypt/certs/privkey.pem
