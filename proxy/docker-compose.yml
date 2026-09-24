@@ -13,6 +13,7 @@ services:
       - TZ=${TZ}
     volumes:
       - /var/log:/var/log
+      - ./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro
       - /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem:/etc/certs/fullchain.pem:ro
       - /etc/letsencrypt/live/${MYDOMAIN}/privkey.pem:/etc/certs/privkey.pem:ro
       - /etc/letsencrypt/archive/${MYDOMAIN}:/etc/letsencrypt/archive/${MYDOMAIN}:ro
@@ -22,6 +23,7 @@ services:
       #- --log.filepath=/var/log/traefik.log
       - --accesslog=true
       #- --accesslog.filepath=/var/log/traefik-access.log
+      - --providers.file.filename=/etc/traefik/dynamic_conf.yml
       - --providers.docker.network=proxy
       - --providers.docker.exposedByDefault=false
       - --providers.docker.endpoint=tcp://socketproxy:2375
@@ -40,8 +42,6 @@ services:
       - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
       #- "traefik.http.routers.whoami.middlewares=tinyauth"
-      - "traefik.tls.stores.default.defaultcertificate.certfile=/etc/certs/fullchain.pem"
-      - "traefik.tls.stores.default.defaultcertificate.keyfile=/etc/certs/privkey.pem"
 
   whoami:
     image: traefik/whoami
