@@ -13,6 +13,8 @@ services:
       - TZ=${TZ}
     volumes:
       - /var/log:/var/log
+      - ./traefik/logs:/var/log/traefik
+      - ./traefik/plugins:/plugins
       - ./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro
       - /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem:/etc/certs/fullchain.pem:ro
       - /etc/letsencrypt/live/${MYDOMAIN}/privkey.pem:/etc/certs/privkey.pem:ro
@@ -20,29 +22,53 @@ services:
     command:
       - --api.dashboard=true
       - --log.level=INFO
-      #- --log.filepath=/var/log/traefik.log
-      - --accesslog=true
-      #- --accesslog.filepath=/var/log/traefik-access.log
+
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      - "--accesslog.filepath=/var/log/traefik/access.log"
+      
       - --providers.file.filename=/etc/traefik/dynamic_conf.yml
+      
       - --providers.docker.network=proxy
       - --providers.docker.exposedByDefault=false
       - --providers.docker.endpoint=tcp://socketproxy:2375
+      
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.asDefault=true 
-      #- --entrypoints.websecure.http.tls.certresolver=myresolver
-      #- --certificatesresolvers.myresolver.acme.email=mail@example.com
-      #- --certificatesresolvers.myresolver.acme.tlschallenge=true
-      #- --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+
+      - "--experimental.plugins.crowdsec.modulename=github.com/crowdsecurity/crowdsec-traefik-bouncer"
+      - "--experimental.plugins.crowdsec.modulepath=/plugins"
+      # Attach CrowdSec middleware to entrypoints
+      - "--entrypoints.web.http.middlewares=crowdsec-bouncer"
+      - "--entrypoints.websecure.http.middlewares=crowdsec-bouncer"
     labels:
       - traefik.enable=true
       - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
       - traefik.http.routers.mydashboard.middlewares=tinyauth
+      # Enable CrowdSec bouncer globally for all entrypoints
+      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.apiUrl=http://crowdsec:8080"
+      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.apiKey=${CROWDSEC_BOUNCER_KEY}" 
+      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.enabled=true"
+      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.banResponse=403 Forbidden"
+      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.checkDuration=1m"
 
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    environment:
+      - COLLECTIONS=crowdsecurity/traefik,crowdsecurity/http-bad-bots,crowdsecurity/brute-force,crowdsecurity/http-cve,crowdsecurity/http-probing,crowdsecurity/http-slowloris
+      - BOUNCER_KEY=${CROWDSEC_BOUNCER_KEY}
+    volumes:
+      - ./crowdsec/config:/etc/crowdsec
+      - ./crowdsec/data:/var/lib/crowdsec 
+      - ./traefik/logs:/var/log/traefik:ro      
+      networks:
+      - proxy
+      
   whoami:
     image: traefik/whoami
     container_name: whoami
