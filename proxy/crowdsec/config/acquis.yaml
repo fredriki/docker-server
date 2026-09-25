@@ -1,0 +1,6 @@
+sources:
+  traefik:
+    type: file
+    path: /var/log/traefik/access.log
+    labels:
+      type: traefik
