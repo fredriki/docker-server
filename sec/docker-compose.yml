@@ -34,3 +34,6 @@ services:
     depends_on:
       - idstower
 
+networks:
+  proxy:
+    external: true
