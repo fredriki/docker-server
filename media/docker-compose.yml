@@ -132,7 +132,6 @@ services:
     networks:
       - proxy
 
-services:
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
