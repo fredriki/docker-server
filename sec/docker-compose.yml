@@ -19,7 +19,7 @@ services:
 
   # Suricata IDS Engine
   suricata:
-    image: suricata/suricata:latest
+    image: jasonish/suricata:latest
     container_name: suricata
     network_mode: "host" # Crucial to sniff host/docker interface traffic
     cap_add:
