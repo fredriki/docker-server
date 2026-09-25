@@ -140,10 +140,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${MYDOMAIN}`)
-      - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
     volumes:
       - ./flaresolver:/config
     restart: unless-stopped
