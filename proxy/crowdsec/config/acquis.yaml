@@ -10,14 +10,3 @@ sources:
     path: /var/log/auth.log
     labels:
       type: syslog
-
-  cockpit:
-    type: file
-    path: /var/log/cockpit/
-    labels:
-      type: cockpitsources:
-  traefik:
-    type: file
-    path: /var/log/traefik/access.log
-    labels:
-      type: traefik
