@@ -1,48 +1,41 @@
 #!/bin/bash
 set -e
 
-# Create plugins directory
-mkdir -p ./traefik/plugins
-echo "Downloading CrowdSec Traefik bouncer plugin from maxlerebourg/crowdsec-bouncer-traefik-plugin..."
+# --- Step 1: Install CrowdSec Bouncer on the Host ---
+echo "Installing CrowdSec firewall bouncer on the host..."
 
-# Download the plugin from the correct repository
-curl -L https://github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/releases/latest/download/crowdsec-bouncer-traefik-plugin.tar.gz -o ./traefik/plugins/crowdsec-bouncer-traefik-plugin.tar.gz
+# Install the firewall bouncer
+sudo apt-get update
+sudo apt-get install -y crowdsec-firewall-bouncer
 
-# Verify the download
-if [ ! -s ./traefik/plugins/crowdsec-bouncer-traefik-plugin.tar.gz ]; then
-    echo "ERROR: Downloaded file is empty or missing."
-    rm -f ./traefik/plugins/crowdsec-bouncer-traefik-plugin.tar.gz
-    exit 1
-fi
+# Configure the bouncer (we'll update the API key later)
+sudo tee /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml > /dev/null <<EOL
+api_key: ""
+api_url: "http://localhost:8080"
+mode: iptables
+iptables_chain: CROWDSEC
+EOL
 
-# Check file type
-echo "Checking file type..."
-file ./traefik/plugins/crowdsec-bouncer-traefik-plugin.tar.gz
+# Enable and start the bouncer service
+sudo systemctl enable crowdsec-firewall-bouncer
+sudo systemctl start crowdsec-firewall-bouncer
 
-# Extract the plugin
-echo "Extracting plugin..."
-tar -xvzf ./traefik/plugins/crowdsec-bouncer-traefik-plugin.tar.gz -C ./traefik/plugins
+echo "CrowdSec firewall bouncer installed and started."
 
-# Clean up the tarball
-rm ./traefik/plugins/crowdsec-bouncer-traefik-plugin.tar.gz
+---
 
-# Verify the plugin file exists
-if [ ! -f ./traefik/plugins/crowdsec-bouncer-traefik-plugin.so ]; then
-    echo "ERROR: Plugin file not found after extraction."
-    echo "Contents of ./traefik/plugins:"
-    ls -la ./traefik/plugins
-    exit 1
-fi
+# --- Step 2: Set Up CrowdSec in Docker ---
+echo "Setting up CrowdSec in Docker..."
 
-# Set permissions
-chmod -R 755 ./traefik/plugins
-echo "Plugin extracted successfully."
+# Create directories for CrowdSec and Traefik logs
+mkdir -p ./crowdsec/config
+mkdir -p ./traefik/logs
 
 # Copy the common environment file
 cp ../common.env ./.env
 
 # Start CrowdSec container
-echo "Starting CrowdSec container... please wait"
+echo "Starting CrowdSec container..."
 docker compose up -d crowdsec
 
 # Wait for CrowdSec to be ready
@@ -53,9 +46,9 @@ until docker exec crowdsec curl -s http://localhost:8080/v1/ready >/dev/null; do
 done
 echo -e "\nCrowdSec is ready."
 
-# Generate the CrowdSec bouncer API key
-echo "Generating API key for CrowdSec bouncer..."
-CROWDSEC_BOUNCER_KEY=$(docker exec crowdsec cscli bouncers add traefik-bouncer | grep "API key:" | awk '{print $3}')
+# Generate the CrowdSec bouncer API key for the host bouncer
+echo "Generating API key for CrowdSec firewall bouncer..."
+CROWDSEC_BOUNCER_KEY=$(docker exec crowdsec cscli bouncers add crowdsec-firewall-bouncer | grep "API key:" | awk '{print $3}')
 
 # Check if the key was generated successfully
 if [ -z "$CROWDSEC_BOUNCER_KEY" ]; then
@@ -63,16 +56,20 @@ if [ -z "$CROWDSEC_BOUNCER_KEY" ]; then
     exit 1
 fi
 
-# Append the key to the .env file
-echo "CROWDSEC_BOUNCER_KEY=$CROWDSEC_BOUNCER_KEY" >> .env
-echo "API key added to .env file."
+# Update the bouncer configuration with the new API key
+echo "Updating CrowdSec firewall bouncer configuration..."
+sudo sed -i "s|api_key: \"\"|api_key: \"$CROWDSEC_BOUNCER_KEY\"|" /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
 
-# Stop CrowdSec container to apply the new key
-echo "Stopping CrowdSec container..."
-docker compose down crowdsec
+# Restart the bouncer to apply the new key
+sudo systemctl restart crowdsec-firewall-bouncer
+echo "CrowdSec firewall bouncer updated with API key and restarted."
 
-# Start everything up
-echo "Starting all services..."
-docker compose up -d
+---
 
-echo "Setup complete! All services are running."
+# --- Step 3: Configure Traefik ---
+echo "Configuring Traefik..."
+docker compose up -d traefik
+
+echo "All services are running."
+echo "CrowdSec firewall bouncer is active on the host."
+echo "Traefik logs are being parsed by CrowdSec in Docker."
