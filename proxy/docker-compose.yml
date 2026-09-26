@@ -50,8 +50,9 @@ services:
         crowdsecurity/traefik
         crowdsecurity/http-cve
         crowdsecurity/sshd
-        crowdsecurity/cockpit
         crowdsecurity/linux
+        crowdsecurity/nextcloud
+        
       PARSERS: "crowdsecurity/geoip-enrich"
     volumes:
       - ./crowdsec/config:/etc/crowdsec
