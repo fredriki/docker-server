@@ -48,6 +48,7 @@ services:
     container_name: crowdsec
     environment:
       LAPI_LISTEN_ADDR: 0.0.0.0
+      TRUSTED_IPS: 172.19.0.1
       COLLECTIONS: >-
         crowdsecurity/traefik
         crowdsecurity/http-cve
