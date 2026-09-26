@@ -69,6 +69,9 @@ services:
       - ./nextcloud/config:/var/www/html/config
       - ./nextcloud/data:/var/www/html/data
     entrypoint: /cron.sh
+    networks:
+      - redisnet
+      - dbnet
     extra_hosts:
       - "${MYDOMAIN}:host-gateway" 
       
