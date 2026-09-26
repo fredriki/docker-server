@@ -47,6 +47,7 @@ services:
     image: crowdsecurity/crowdsec:latest
     container_name: crowdsec
     environment:
+      LAPI_LISTEN_ADDR: 0.0.0.0
       COLLECTIONS: >-
         crowdsecurity/traefik
         crowdsecurity/http-cve
