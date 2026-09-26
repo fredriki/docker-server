@@ -22,8 +22,6 @@ sudo systemctl start crowdsec-firewall-bouncer
 
 echo "CrowdSec firewall bouncer installed and started."
 
----
-
 # --- Step 2: Set Up CrowdSec in Docker ---
 echo "Setting up CrowdSec in Docker..."
 
