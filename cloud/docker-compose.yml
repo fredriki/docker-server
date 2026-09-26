@@ -68,14 +68,7 @@ services:
       - ./nextcloud/apps:/var/www/html/custom_apps
       - ./nextcloud/config:/var/www/html/config
       - ./nextcloud/data:/var/www/html/data
-    entrypoint: |
-      bash -c 'sh -s <<EOF
-      trap "exit 0" TERM
-      while true; do
-        php -f /var/www/html/cron.php
-        sleep 300
-      done
-      EOF'
+    entrypoint: /cron.sh
       
 networks:
   proxy:
