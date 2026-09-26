@@ -26,7 +26,7 @@ echo -e "\nCrowdSec is ready."
 
 # Generate the CrowdSec bouncer API key for the host bouncer
 echo "Generating API key for CrowdSec firewall bouncer..."
-CROWDSEC_BOUNCER_KEY=$(docker exec crowdsec cscli bouncers add crowdsec-firewall-bouncer | grep "API key:" | awk '{print $3}')
+CROWDSEC_BOUNCER_KEY=$(docker exec crowdsec cscli bouncers add crowdsec-firewall-bouncer | grep -oE '[a-zA-Z0-9+/]{40,}')
 
 # Check if the key was generated successfully
 if [ -z "$CROWDSEC_BOUNCER_KEY" ]; then
