@@ -13,6 +13,7 @@ services:
       - dbnet
     environment:
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${MYDOMAIN}
+      - TRUSTED_PROXIES=172.16.0.0/12
     env_file:
       - .env
     labels:
