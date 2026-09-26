@@ -46,13 +46,15 @@ services:
   crowdsec:
     image: crowdsecurity/crowdsec:latest
     environment:
-      - COLLECTIONS=crowdsecurity/traefik,crowdsecurity/http-bad-bots,crowdsecurity/brute-force,crowdsecurity/http-cve,crowdsecurity/http-probing,crowdsecurity/http-slowloris
+      - COLLECTIONS=crowdsecurity/traefik,crowdsecurity/http-bad-bots,crowdsecurity/brute-force,crowdsecurity/http-cve,crowdsecurity/http-probing,crowdsecurity/http-slowloris,crowdsecurity/sshd,crowdsecurity/cockpit
     volumes:
       - ./crowdsec/config:/etc/crowdsec
-      - ./crowdsec/data:/var/lib/crowdsec 
+      - ./crowdsec/data:/var/lib/crowdsec
       - ./traefik/logs:/var/log/traefik:ro
+      - /var/log/auth.log:/var/log/auth.log:ro  # SSH logs
+      - /var/log/cockpit:/var/log/cockpit:ro    # Cockpit logs
     ports:
-      - "127.0.0.1:8080:8080"  # Bind to localhost only
+      - "127.0.0.1:8080:8080"  # Expose LAPI only to localhost
     networks:
       - proxy
       
