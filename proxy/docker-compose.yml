@@ -48,12 +48,10 @@ services:
     environment:
       COLLECTIONS: >-
         crowdsecurity/traefik
-        crowdsecurity/brute-force
         crowdsecurity/http-cve
-        crowdsecurity/http-probing
-        crowdsecurity/http-slowloris
         crowdsecurity/sshd
         crowdsecurity/cockpit
+        crowdsecurity/linux
       PARSERS: "crowdsecurity/geoip-enrich"
     volumes:
       - ./crowdsec/config:/etc/crowdsec
