@@ -48,7 +48,6 @@ services:
     environment:
       COLLECTIONS: >-
         crowdsecurity/traefik
-        crowdsecurity/http-bad-bots
         crowdsecurity/brute-force
         crowdsecurity/http-cve
         crowdsecurity/http-probing
