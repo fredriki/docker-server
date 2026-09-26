@@ -12,9 +12,7 @@ services:
     environment:
       - TZ=${TZ}
     volumes:
-      - /var/log:/var/log
       - ./traefik/logs:/var/log/traefik
-      - ./traefik/plugins:/plugins
       - ./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro
       - /etc/letsencrypt/live/${MYDOMAIN}/fullchain.pem:/etc/certs/fullchain.pem:ro
       - /etc/letsencrypt/live/${MYDOMAIN}/privkey.pem:/etc/certs/privkey.pem:ro
@@ -39,34 +37,23 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.asDefault=true 
-
-      - "--experimental.plugins.crowdsec.modulename=github.com/crowdsecurity/crowdsec-traefik-bouncer"
-      - "--experimental.plugins.crowdsec.modulepath=/plugins"
-      # Attach CrowdSec middleware to entrypoints
-      - "--entrypoints.web.http.middlewares=crowdsec-bouncer"
-      - "--entrypoints.websecure.http.middlewares=crowdsec-bouncer"
     labels:
       - traefik.enable=true
       - traefik.http.routers.mydashboard.rule=Host(`proxy.${MYDOMAIN}`)
       - traefik.http.routers.mydashboard.service=api@internal
       - traefik.http.routers.mydashboard.middlewares=tinyauth
-      # Enable CrowdSec bouncer globally for all entrypoints
-      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.apiUrl=http://crowdsec:8080"
-      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.apiKey=${CROWDSEC_BOUNCER_KEY}" 
-      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.enabled=true"
-      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.banResponse=403 Forbidden"
-      - "traefik.http.middlewares.crowdsec-bouncer.plugin.crowdsec.checkDuration=1m"
 
   crowdsec:
     image: crowdsecurity/crowdsec:latest
     environment:
       - COLLECTIONS=crowdsecurity/traefik,crowdsecurity/http-bad-bots,crowdsecurity/brute-force,crowdsecurity/http-cve,crowdsecurity/http-probing,crowdsecurity/http-slowloris
-      - BOUNCER_KEY=${CROWDSEC_BOUNCER_KEY}
     volumes:
       - ./crowdsec/config:/etc/crowdsec
       - ./crowdsec/data:/var/lib/crowdsec 
-      - ./traefik/logs:/var/log/traefik:ro      
-      networks:
+      - ./traefik/logs:/var/log/traefik:ro
+    ports:
+      - "127.0.0.1:8080:8080"  # Bind to localhost only
+    networks:
       - proxy
       
   whoami:
