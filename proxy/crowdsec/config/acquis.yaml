@@ -1,12 +1,9 @@
-sources:
-  traefik:
-    type: file
-    path: /var/log/traefik/access.log
-    labels:
-      type: traefik
-
-  ssh:
-    type: file
-    path: /var/log/auth.log
-    labels:
-      type: syslog
+filenames:
+  - /var/log/traefik/access.log
+labels:
+  type: traefik
+---
+filenames:
+  - /var/log/auth.log
+labels:
+  type: syslog
