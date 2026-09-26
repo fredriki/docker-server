@@ -1,6 +1,29 @@
 #!/bin/bash
 set -e
 
+
+echo "Installing CrowdSec firewall bouncer on the host..."
+
+# Install the firewall bouncer
+sudo apt update
+sudo apt install -y crowdsec-firewall-bouncer
+
+# Configure the bouncer (we'll update the API key later)
+sudo tee /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml > /dev/null <<EOL
+api_key: ""
+api_url: "http://localhost:8080"
+mode: iptables
+iptables_chain: CROWDSEC
+log_mode: file
+log_level: info
+EOL
+
+# Enable and start the bouncer service
+sudo systemctl enable crowdsec-firewall-bouncer
+sudo systemctl start crowdsec-firewall-bouncer
+
+echo "CrowdSec firewall bouncer installed and started."
+
 # --- Step 1: Set Up CrowdSec in Docker ---
 echo "Setting up CrowdSec in Docker..."
 
