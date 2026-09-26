@@ -69,6 +69,8 @@ services:
       - ./nextcloud/config:/var/www/html/config
       - ./nextcloud/data:/var/www/html/data
     entrypoint: /cron.sh
+    extra_hosts:
+      - "yourdomain.com:host-gateway" 
       
 networks:
   proxy:
