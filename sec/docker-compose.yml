@@ -22,7 +22,7 @@ services:
       
   # CrowdSec Metabase Dashboard
   metabase:
-    image: crowdsecurity/metabase:latest
+    image: metabase/metabase:latest
     container_name: crowdsec_metabase
     environment:
       - MB_DB_FILE=/data/metabase.db
