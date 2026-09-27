@@ -20,24 +20,18 @@ services:
     ports:
       - "8080:8080"  # Expose LAPI to host
       
-  # CrowdSec Metabase Dashboard
-  metabase:
-    image: metabase/metabase:latest
-    container_name: crowdsec_metabase
-    environment:
-      - MB_DB_FILE=/data/metabase.db
-      - CROWDSEC_LAPI_URL=http://crowdsec:8080  # Points to CrowdSec LAPI
-    volumes:
-      - ./metabase/data:/data
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.metabase.rule=Host(`metabase.${MYDOMAIN}`)
-      - traefik.http.services.metabase.loadbalancer.server.port=3000
-    networks:
-      - proxy
-    depends_on:
-      - crowdsec
-
+grafana:
+  image: grafana/grafana:latest
+  container_name: grafana
+  labels:
+    - traefik.enable=true
+    - traefik.http.routers.grafana.rule=Host(`grafana.${MYDOMAIN}`)
+    - traefik.http.services.grafana.loadbalancer.server.port=3000
+  volumes:
+    - ./grafana/data:/var/lib/grafana
+  networks:
+    - proxy
+    
   suricata:
     image: jasonish/suricata:latest
     container_name: suricata
