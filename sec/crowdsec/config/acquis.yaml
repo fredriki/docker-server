@@ -7,3 +7,8 @@ filenames:
   - /var/log/auth.log
 labels:
   type: syslog
+---
+filenames:
+  - /var/log/suricata/eve.json
+labels:
+  type: suricata
