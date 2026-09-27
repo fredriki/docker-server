@@ -28,6 +28,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${MYDOMAIN}`)
       - traefik.http.services.grafana.loadbalancer.server.port=3000
+    environment:
+      #- GF_SECURITY_ADMIN_USER=gadmin
+      #- GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=crowdsec-app 
     volumes:
       - ./grafana/data:/var/lib/grafana
     networks:
