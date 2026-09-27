@@ -3,6 +3,7 @@ services:
     image: crowdsecurity/crowdsec:latest
     container_name: crowdsec
     environment:
+      TZ: ${TZ}
       LAPI_LISTEN_ADDR: 0.0.0.0
       TRUSTED_IPS: 172.19.0.1
       COLLECTIONS: >-
@@ -27,6 +28,8 @@ services:
     image: jasonish/suricata:latest
     container_name: suricata
     network_mode: host
+    environment:
+      - TZ=${TZ}
     cap_add:
       - NET_ADMIN
       - NET_RAW
