@@ -20,17 +20,17 @@ services:
     ports:
       - "8080:8080"  # Expose LAPI to host
       
-grafana:
-  image: grafana/grafana:latest
-  container_name: grafana
-  labels:
-    - traefik.enable=true
-    - traefik.http.routers.grafana.rule=Host(`grafana.${MYDOMAIN}`)
-    - traefik.http.services.grafana.loadbalancer.server.port=3000
-  volumes:
-    - ./grafana/data:/var/lib/grafana
-  networks:
-    - proxy
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`grafana.${MYDOMAIN}`)
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+    networks:
+      - proxy
     
   suricata:
     image: jasonish/suricata:latest
