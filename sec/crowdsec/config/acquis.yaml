@@ -11,4 +11,4 @@ labels:
 filenames:
   - /var/log/suricata/eve.json
 labels:
-  type: suricata
+  type: suricata-evelogs
