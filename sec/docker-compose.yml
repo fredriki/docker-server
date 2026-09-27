@@ -39,7 +39,7 @@ services:
     command: >
       -i ${MONITOR_IFACE:-enp4s0}
       --set outputs.1.eve-log.types.0.alert.payload=no
-      --set outputs.1.eve-log.limit=10mb
+      --set outputs.1.eve-log.limit=40mb
 
 volumes:
   # Allocates a maximum of 50 Megabytes in host system memory
