@@ -74,6 +74,24 @@ services:
       - /storage/docker-data/series:/tv
       - /storage/docker-data/downloads:/downloads
     restart: unless-stopped
+
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lidarr.rule=Host(`lidarr.${MYDOMAIN}`)
+      - traefik.http.services.lidarr.loadbalancer.server.port=8686
+    volumes:
+      - ./lidarr/config:/config
+      - /storage/docker-data/music:/music
+      - /storage/docker-data/downloads:/downloads
+    restart: unless-stopped
     networks:
       - proxy
       
