@@ -24,6 +24,7 @@ services:
       - "--accesslog=true"
       - "--accesslog.format=json"
       - "--accesslog.filepath=/var/log/traefik/access.log"
+      - "--accesslog.fields.headers.defaultmode=keep"
       
       - --providers.file.filename=/etc/traefik/dynamic_conf.yml
       
