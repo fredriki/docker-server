@@ -17,7 +17,7 @@ services:
     volumes:
       - ./crowdsec/config:/etc/crowdsec
       - ./crowdsec/data:/var/lib/crowdsec/data/
-      - ./suricata/logs:/var/log/suricata:ro
+      - suricata-tmpfs-logs:/var/log/suricata:ro
       - ${TRAEFIK_LOGS_DIR:-./../proxy/traefik/logs}:/var/log/traefik:ro
       - ${SSH_LOGS_DIR:-/var/log/auth.log}:/var/log/auth.log:ro
     ports:
@@ -32,8 +32,19 @@ services:
       - NET_RAW
       - SYS_NICE
     volumes:
-      - ./suricata/logs:/var/log/suricata
+      - suricata-tmpfs-logs:/var/log/suricata
       - ./suricata/rules:/var/lib/suricata
       - ./suricata/config:/etc/suricata
     restart: unless-stopped
-    command: -i ${MONITOR_IFACE:-enp4s0}
+    command: >
+      -i ${MONITOR_IFACE:-enp4s0}
+      --set outputs.1.eve-log.types.0.alert.payload=no
+      --set outputs.1.eve-log.limit=10mb
+
+volumes:
+  # Allocates a maximum of 50 Megabytes in host system memory
+  suricata-tmpfs-logs:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=50M,uid=1000,gid=1000"
