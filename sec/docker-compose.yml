@@ -12,6 +12,7 @@ services:
         crowdsecurity/sshd
         crowdsecurity/linux
         crowdsecurity/nextcloud
+        crowdsecurity/nextcloud-whitelist
         crowdsecurity/whitelist-good-actors
         crowdsecurity/suricata
       PARSERS: "crowdsecurity/geoip-enrich"
