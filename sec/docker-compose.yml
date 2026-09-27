@@ -12,10 +12,9 @@ services:
         crowdsecurity/sshd
         crowdsecurity/linux
         crowdsecurity/nextcloud
-        crowdsecurity/nextcloud-whitelist
         crowdsecurity/whitelist-good-actors
         crowdsecurity/suricata
-      PARSERS: "crowdsecurity/geoip-enrich"
+      PARSERS: "crowdsecurity/geoip-enrich crowdsecurity/nextcloud-whitelist"
     volumes:
       - ./crowdsec/config:/etc/crowdsec
       - ./crowdsec/data:/var/lib/crowdsec/data/
