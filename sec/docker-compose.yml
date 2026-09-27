@@ -36,9 +36,7 @@ services:
       - ./suricata/rules:/var/lib/suricata
       - ./suricata/config:/etc/suricata
     restart: unless-stopped
-    command: >
-      -i ${MONITOR_IFACE:-enp4s0}
-      --set outputs.1.eve-log.limit=400mb
+    command: -i ${MONITOR_IFACE:-enp4s0}
 
 volumes:
   # Allocates a maximum of 50 Megabytes in host system memory
