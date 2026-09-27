@@ -1,0 +1,60 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    environment:
+      LAPI_LISTEN_ADDR: 0.0.0.0
+      TRUSTED_IPS: 172.19.0.1
+      COLLECTIONS: >-
+        crowdsecurity/traefik
+        crowdsecurity/http-cve
+        crowdsecurity/sshd
+        crowdsecurity/linux
+        crowdsecurity/nextcloud
+      PARSERS: "crowdsecurity/geoip-enrich"
+    volumes:
+      - ./crowdsec/config:/etc/crowdsec
+      - ./crowdsec/data:/var/lib/crowdsec/data/
+      - ${TRAEFIK_LOGS_DIR:-./../proxy/traefik/logs}:/var/log/traefik:ro
+      - ${SSH_LOGS_DIR:-/var/log/auth.log}:/var/log/auth.log:ro
+    ports:
+      - "8080:8080"  # Expose LAPI to host
+      
+  # CrowdSec Metabase Dashboard
+  metabase:
+    image: crowdsecurity/metabase:latest
+    container_name: crowdsec_metabase
+    environment:
+      - MB_DB_FILE=/data/metabase.db
+      - CROWDSEC_LAPI_URL=http://crowdsec:8080  # Points to CrowdSec LAPI
+    volumes:
+      - ./metabase/data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.metabase.rule=Host(`metabase.${MYDOMAIN}`)
+      - traefik.http.services.metabase.loadbalancer.server.port=3000r
+    networks:
+      - proxy
+    depends_on:
+      - crowdsec
+
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: suricata
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_NICE
+    volumes:
+      - ./suricata/logs:/var/log/suricata
+      - ./suricata/rules:/var/lib/suricata
+      - ./suricata/config:/etc/suricata
+      - ${TRAEFIK_LOGS_DIR:-./../proxy/traefik/logs}:/var/log/traefik:ro
+      - ${SSH_LOGS_DIR:-/var/log/auth.log}:/var/log/auth.log:ro
+    restart: unless-stopped
+    command: -i ${MONITOR_IFACE:-enp4s0}
+
+networks:
+  proxy:
+    external: true
