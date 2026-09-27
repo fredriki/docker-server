@@ -11,10 +11,13 @@ services:
         crowdsecurity/sshd
         crowdsecurity/linux
         crowdsecurity/nextcloud
+        crowdsecurity/whitelist-good-actors
+        crowdsecurity/suricata
       PARSERS: "crowdsecurity/geoip-enrich"
     volumes:
       - ./crowdsec/config:/etc/crowdsec
       - ./crowdsec/data:/var/lib/crowdsec/data/
+      - ./suricata/logs:/var/log/suricata:ro
       - ${TRAEFIK_LOGS_DIR:-./../proxy/traefik/logs}:/var/log/traefik:ro
       - ${SSH_LOGS_DIR:-/var/log/auth.log}:/var/log/auth.log:ro
     ports:
@@ -32,11 +35,5 @@ services:
       - ./suricata/logs:/var/log/suricata
       - ./suricata/rules:/var/lib/suricata
       - ./suricata/config:/etc/suricata
-      - ${TRAEFIK_LOGS_DIR:-./../proxy/traefik/logs}:/var/log/traefik:ro
-      - ${SSH_LOGS_DIR:-/var/log/auth.log}:/var/log/auth.log:ro
     restart: unless-stopped
     command: -i ${MONITOR_IFACE:-enp4s0}
-
-networks:
-  proxy:
-    external: true
