@@ -132,6 +132,8 @@ services:
 networks:
   proxy:
     name: proxy
+    driver_opts:
+      com.docker.network.bridge.name: proxy-net
 
   socket:
     name: socket
