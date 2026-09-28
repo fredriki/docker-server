@@ -12,3 +12,8 @@ filenames:
   - /var/log/suricata/eve.json
 labels:
   type: suricata-evelogs
+---
+filenames:
+  - /var/log/nextcloud/nextcloud.log
+labels:
+  type: nextcloud
