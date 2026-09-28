@@ -21,6 +21,7 @@ services:
       - suricata-tmpfs-logs:/var/log/suricata:ro
       - ${TRAEFIK_LOGS_DIR:-./../proxy/traefik/logs}:/var/log/traefik:ro
       - ${SSH_LOGS_DIR:-/var/log/auth.log}:/var/log/auth.log:ro
+      - ${NEXTCLOUD_LOGS_DIR:-./../cloud/nextcloud/data}:/var/log/nextcloud:ro
     ports:
       - "8080:8080"  # Expose LAPI to host
     
