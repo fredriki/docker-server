@@ -1,0 +1,7 @@
+name: my/traefik-nextcloud-conditional
+description: "Allow successful nextcloud despite rate"
+filter: "evt.Meta.service == 'http' && evt.Parsed.request contains '/remote.php/dav/'"
+whitelist:
+  reason: "Do not ban successful nextcloud calls"
+  expression:
+    - "evt.Meta.http_status in ['200', '207', '304']"
