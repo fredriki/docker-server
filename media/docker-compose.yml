@@ -17,6 +17,7 @@ services:
       - ./jellyfin/cache:/cache
       - /storage/docker-data/series:/data/tvshows
       - /storage/docker-data/movies:/data/movies
+      - /storage/docker-data/music:/data/music
     restart: unless-stopped
     networks:
       - proxy
