@@ -15,3 +15,5 @@ services:
     #devices:
     #  - /path/to/device:/path/to/device #optional
     restart: unless-stopped
+    networks:
+      - proxy
