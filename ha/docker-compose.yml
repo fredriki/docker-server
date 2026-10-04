@@ -1,0 +1,17 @@
+services:
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homeassistant.rule=Host(`homeassistant.${MYDOMAIN}`)
+      - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+    volumes:
+      - ./homeassistant/data:/config
+    #devices:
+    #  - /path/to/device:/path/to/device #optional
+    restart: unless-stopped
